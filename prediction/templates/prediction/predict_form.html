@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ML Prediction Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #f4f6f8;
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90vw;
+            max-width: 1100px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 32px 4vw 24px 4vw;
+        }
+        h1 {
+            text-align: center;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 1.08rem;
+            margin-bottom: 18px;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #e5e7eb;
+            margin: 18px 0 24px 0;
+        }
+        .section-title {
+            font-size: 1.08rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 10px;
+            margin-top: 18px;
+        }
+        .section {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 18px 18px 8px 18px;
+            margin-bottom: 18px;
+        }
+        .form-row {
+            display: flex;
+            gap: 16px;
+            margin-left: -8px;
+            margin-right: -8px;
+        }
+        .form-group {
+            flex: 1;
+            margin-bottom: 24px;
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #374151;
+            font-weight: 500;
+        }
+        .required-star {
+            color: #e53e3e;
+            margin-left: 2px;
+        }
+        input, select {
+            width: 95%;
+            box-sizing: border-box;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #f9fafb;
+            transition: border 0.2s;
+            margin-bottom: 4px;
+        }
+        input:focus, select:focus {
+            border: 1.5px solid #6366f1;
+            outline: none;
+            background: #fff;
+        }
+        .error {
+            color: #e53e3e;
+            font-size: 0.92em;
+            margin-top: 2px;
+        }
+        button[type="submit"] {
+            width: 100%;
+            background: #222;
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            border-radius: 6px;
+            padding: 14px 0;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        button[type="submit"]:hover {
+            background: #444;
+        }
+        .result-red, .result-yellow, .result-green {
+            border-radius: 10px;
+            margin-top: 28px;
+            padding: 20px 18px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .result-red {
+            background: linear-gradient(90deg, #ffe5e5 0%, #ffd6d6 100%);
+            color: #a00;
+            border-left: 6px solid #e53e3e;
+        }
+        .result-yellow {
+            background: linear-gradient(90deg, #fffbe5 0%, #fff7cc 100%);
+            color: #b8860b;
+            border-left: 6px solid #fbbf24;
+        }
+        .result-green {
+            background: linear-gradient(90deg, #e5ffe5 0%, #d6ffd6 100%);
+            color: #006400;
+            border-left: 6px solid #22c55e;
+        }
+        .info-note {
+            color: #6b7280;
+            font-size: 0.98em;
+            margin-top: 18px;
+            text-align: center;
+        }
+        @media (max-width: 700px) {
+            .container {
+                padding: 12px 2vw 12px 2vw;
+            }
+            h1 {
+                font-size: 1.2rem;
+            }
+        }
+        @media (max-width: 500px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+        .navbar {
+            width: 100vw;
+            background: #222;
+            padding: 0.5em 0;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 24px;
+            padding-left: 4vw;
+        }
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.08rem;
+            padding: 8px 18px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .nav-link:hover {
+            background: #444;
+            color: #60a5fa;
+        }
+        @media (max-width: 700px) {
+            .nav-container {
+                padding-left: 2vw;
+                gap: 12px;
+            }
+            .nav-link {
+                font-size: 1rem;
+                padding: 8px 10px;
+            }
+        }
+    </style>
+    <script>
+    function validateForm() {
+        let valid = true;
+        let fields = [
+            {id: 'monthlyIncome', type: 'number'},
+            {id: 'dataPackExpense', type: 'number'},
+            {id: 'savings', type: 'number'},
+            {id: 'familyMembers', type: 'number'},
+            {id: 'childrenCount', type: 'number'},
+            {id: 'earningMembers', type: 'number'},
+            {id: 'dependentMembers', type: 'number'},
+            {id: 'cylinderPreference', type: 'text'},
+            {id: 'name', type: 'text'},
+            {id: 'state', type: 'text'},
+            {id: 'city', type: 'text'},
+            {id: 'internetUsed', type: 'text'},
+            {id: 'foodFuelExpensePercent', type: 'text'},
+            {id: 'hasLoan', type: 'text'},
+            {id: 'hasLand', type: 'text'},
+            {id: 'childrenStatus', type: 'text'},
+            {id: 'cookingTogether', type: 'text'},
+            {id: 'lpgRefillFrequency', type: 'text'},
+            {id: 'lpgPreference', type: 'text'},
+            {id: 'lpgChallenges', type: 'text'},
+            {id: 'jobType', type: 'text'},
+            {id: 'emergencyFundSource', type: 'text'},
+            {id: 'facedEmergency', type: 'text'},
+            {id: 'assets', type: 'text'},
+            {id: 'ownsVehicle', type: 'text'},
+            {id: 'incomeCycle', type: 'text'},
+            {id: 'awareOfGovtScheme', type: 'text'},
+            {id: 'pastLoanDefault', type: 'text'}
+        ];
+        fields.forEach(f => {
+            let el = document.getElementById(f.id);
+            let err = document.getElementById(f.id + '-err');
+            if (el && err) {
+                if (f.type === 'number' && (isNaN(el.value) || el.value === '')) {
+                    err.textContent = 'Enter a valid number';
+                    valid = false;
+                } else if (f.type === 'text' && el.value === '') {
+                    err.textContent = 'This field is required';
+                    valid = false;
+                } else {
+                    err.textContent = '';
+                }
+            }
+        });
+        return valid;
+    }
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/api/predict-form/" class="nav-link">Prediction Form</a>
+            <a href="/api/history/" class="nav-link">History</a>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>ML Prediction Form</h1>
+        <div class="subtitle">Please fill out the prediction form below. Fields marked with a <span class="required-star">*</span> are mandatory.</div>
+        <hr>
+        <form method="post" onsubmit="return validateForm();">
+            {% csrf_token %}
+            <div class="section">
+                <div class="section-title">Basic Information</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Name<span class="required-star">*</span></label>
+                        <input id="name" name="name" type="text" required>
+                        <span class="error" id="name-err"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State<span class="required-star">*</span></label>
+                        <input id="state" name="state" type="text" required>
+                        <span class="error" id="state-err"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">City<span class="required-star">*</span></label>
+                        <input id="city" name="city" type="text" required>
+                        <span class="error" id="city-err"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <div class="section-title">Financial & Usage Information</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="monthlyIncome">Monthly Income<span class="required-star">*</span></label>
+                        <input id="monthlyIncome" name="monthlyIncome" type="number" required>
+                        <span class="error" id="monthlyIncome-err"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataPackExpense">Data Pack Expense<span class="required-star">*</span></label>
+                        <input id="dataPackExpense" name="dataPackExpense" type="number" required>
+                        <span class="error" id="dataPackExpense-err"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="savings">Savings<span class="required-star">*</span></label>
+                        <input id="savings" name="savings" type="number" required>
+                        <span class="error" id="savings-err"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="internetUsed">Internet Used (yes/no)<span class="required-star">*</span></label>
+                        <input id="internetUsed" name="internetUsed" type="text" required>
+                        <span class="error" id="internetUsed-err"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="foodFuelExpensePercent">Food/Fuel Expense Percent<span class="required-star">*</span></label>
+                        <input id="foodFuelExpensePercent" name="foodFuelExpensePercent" type="text" required>
+                        <span class="error" id="foodFuelExpensePercent-err"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="hasLoan">Has Loan (yes/no)<span class="required-star">*</span></label>
+                        <input id="hasLoan" name="hasLoan" type="text" required>
+                        <span class="error" id="hasLoan-err"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="hasLand">Has Land (yes/no)<span class="required-star">*</span></label>
+                        <input id="hasLand" name="hasLand" type="text" required>
+                        <span class="error" id="hasLand-err"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <div class="section-title">Family & Social Information</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="familyMembers">Family Members<span class="required-star">*</span></label>
+                        <input id="familyMembers" name="familyMembers" type="number" required>
+                        <span class="error" id="familyMembers-err"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="childrenCount">Children Count<span class="required-star">*</span></label>
+                        <input id="childrenCount" name="childrenCount" type="number" required>
+                        <span class="error" id="childrenCount-err"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="childrenStatus">Children Status<span class="required-star">*</span></label>
+                        <input id="childrenStatus" name="childrenStatus" type="text" required>
+                        <span class="error" id="childrenStatus-err"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="cookingTogether">Cooking Together (yes/no)<span class="required-star">*</span></label>
+                        <input id="cookingTogether" name="cookingTogether" type="text" required>
+                        <span class="error" id="cookingTogether-err"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="earningMembers">Earning Members<span class="required-star">*</span></label>
+                        <input id="earningMembers" name="earningMembers" type="number" required>
+                        <span class="error" id="earningMembers-err"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="dependentMembers">Dependent Members<span class="required-star">*</span></label>
+                        <input id="dependentMembers" name="dependentMembers" type="number" required>
+                        <span class="error" id="dependentMembers-err"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <div class="section-title">LPG & Job Information</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lpgRefillFrequency">LPG Refill Frequency<span class="required-star">*</span></label>
+                        <input id="lpgRefillFrequency" name="lpgRefillFrequency" type="text" required>
+                        <span class="error" id="lpgRefillFrequency-err"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="lpgPreference">LPG Preference<span class="required-star">*</span></label>
+                        <input id="lpgPreference" name="lpgPreference" type="text" required>
+                        <span class="error" id="lpgPreference-err"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lpgChallenges">LPG Challenges<span class="required-star">*</span></label>
+                        <input id="lpgChallenges" name="lpgChallenges" type="text" required>
+                        <span class="error" id="lpgChallenges-err"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="cylinderPreference">Cylinder Preference (e.g., 14.2kg)<span class="required-star">*</span></label>
+                        <input id="cylinderPreference" name="cylinderPreference" type="text" required>
+                        <span class="error" id="cylinderPreference-err"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="jobType">Job Type<span class="required-star">*</span></label>
+                        <input id="jobType" name="jobType" type="text" required>
+                        <span class="error" id="jobType-err"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="emergencyFundSource">Emergency Fund Source<span class="required-star">*</span></label>
+                        <input id="emergencyFundSource" name="emergencyFundSource" type="text" required>
+                        <span class="error" id="emergencyFundSource-err"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="facedEmergency">Faced Emergency (yes/no)<span class="required-star">*</span></label>
+                        <input id="facedEmergency" name="facedEmergency" type="text" required>
+                        <span class="error" id="facedEmergency-err"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <div class="section-title">Assets & Other Information</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="assets">Assets<span class="required-star">*</span></label>
+                        <input id="assets" name="assets" type="text" required>
+                        <span class="error" id="assets-err"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="ownsVehicle">Owns Vehicle<span class="required-star">*</span></label>
+                        <input id="ownsVehicle" name="ownsVehicle" type="text" required>
+                        <span class="error" id="ownsVehicle-err"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="incomeCycle">Income Cycle<span class="required-star">*</span></label>
+                        <input id="incomeCycle" name="incomeCycle" type="text" required>
+                        <span class="error" id="incomeCycle-err"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="awareOfGovtScheme">Aware of Govt Scheme (yes/no)<span class="required-star">*</span></label>
+                        <input id="awareOfGovtScheme" name="awareOfGovtScheme" type="text" required>
+                        <span class="error" id="awareOfGovtScheme-err"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pastLoanDefault">Past Loan Default (yes/no)<span class="required-star">*</span></label>
+                        <input id="pastLoanDefault" name="pastLoanDefault" type="text" required>
+                        <span class="error" id="pastLoanDefault-err"></span>
+                    </div>
+                </div>
+            </div>
+            <button type="submit">Predict</button>
+        </form>
+        {% if result %}
+            {% if result.score < 400 %}
+                <div class="result-red">
+                    <strong>Score:</strong> {{ result.score }}<br>
+                    <strong>Risk Category:</strong> {{ result.risk_category }}<br>
+                    <strong>Status:</strong> High Risk (Red)
+                </div>
+            {% elif result.score >= 400 and result.score <= 700 %}
+                <div class="result-yellow">
+                    <strong>Score:</strong> {{ result.score }}<br>
+                    <strong>Risk Category:</strong> {{ result.risk_category }}<br>
+                    <strong>Status:</strong> Medium Risk (Yellow)
+                </div>
+            {% else %}
+                <div class="result-green">
+                    <strong>Score:</strong> {{ result.score }}<br>
+                    <strong>Risk Category:</strong> {{ result.risk_category }}<br>
+                    <strong>Status:</strong> Low Risk (Green)
+                </div>
+            {% endif %}
+        {% endif %}
+        <div class="info-note">
+            Never submit sensitive information such as passwords.<br>
+            <span style="font-size:0.95em;">All information will be kept confidential and used only for prediction purposes.</span>
+        </div>
+    </div>
+</body>
+</html> 
