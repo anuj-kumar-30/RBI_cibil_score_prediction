@@ -131,9 +131,47 @@ def prediction_form(request):
         import requests
         api_url = 'https://rbi-cibil-score-prediction.onrender.com/api/predict/'  # Use Render deployment URL
         data = request.POST.dict()
-        response = requests.post(api_url, json=data)
-        result = response.json() if response.status_code == 200 else None
-        return render(request, 'prediction/predict_form.html', {'result': result, 'data': data})
+        
+        try:
+            response = requests.post(api_url, json=data, timeout=30)
+            
+            if response.status_code == 200:
+                result = response.json()
+                return render(request, 'prediction/predict_form.html', {
+                    'result': result, 
+                    'data': data,
+                    'success': True
+                })
+            else:
+                # Handle API errors
+                error_message = f"API Error: Status {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_message += f" - {error_data.get('error', 'Unknown error')}"
+                except:
+                    error_message += f" - {response.text}"
+                
+                return render(request, 'prediction/predict_form.html', {
+                    'error': error_message,
+                    'data': data,
+                    'success': False
+                })
+                
+        except requests.exceptions.RequestException as e:
+            # Handle connection errors
+            return render(request, 'prediction/predict_form.html', {
+                'error': f"Connection Error: {str(e)}",
+                'data': data,
+                'success': False
+            })
+        except Exception as e:
+            # Handle other errors
+            return render(request, 'prediction/predict_form.html', {
+                'error': f"Unexpected Error: {str(e)}",
+                'data': data,
+                'success': False
+            })
+    
     return render(request, 'prediction/predict_form.html')
 
 def history_page(request):

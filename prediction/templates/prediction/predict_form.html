@@ -448,21 +448,9 @@
             </div>
             <button type="submit">Predict</button>
         </form>
-        <!-- Raw API Response Section for Debugging -->
-        {% if result %}
-            <div class="section" style="margin-top: 30px;">
-                <div class="section-title">Raw API Response (Debug Info)</div>
-                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-top: 10px;">
-                    <h4 style="margin-top: 0; color: #495057;">API Endpoint: <code>{{ api_url|default:"https://rbi-cibil-score-prediction.onrender.com/api/predict/" }}</code></h4>
-                    <h4 style="color: #495057;">Response Status: <span style="color: #28a745;">{{ response_status|default:"200" }} OK</span></h4>
-                    <h4 style="color: #495057;">Raw JSON Response:</h4>
-                    <pre style="background: #fff; border: 1px solid #ced4da; border-radius: 4px; padding: 10px; overflow-x: auto; font-size: 12px; color: #495057;">{{ result|pprint }}</pre>
-                </div>
-            </div>
-        {% endif %}
         
-        <!-- Formatted Result Display -->
-        {% if result %}
+        <!-- Success Result Display -->
+        {% if result and success %}
             <div class="section" style="margin-top: 20px;">
                 <div class="section-title">Prediction Result</div>
                 {% if result.score < 400 %}
@@ -484,6 +472,11 @@
                         <strong>Status:</strong> Low Risk (Green)
                     </div>
                 {% endif %}
+                
+                <!-- Simple API Response Info -->
+                <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 12px; color: #666;">
+                    <strong>API Response:</strong> {{ result|pprint }}
+                </div>
             </div>
         {% endif %}
         
@@ -492,25 +485,7 @@
             <div class="section" style="margin-top: 20px;">
                 <div class="section-title">Error Response</div>
                 <div style="background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 15px; color: #721c24;">
-                    <h4 style="margin-top: 0; color: #721c24;">API Endpoint: <code>{{ api_url|default:"https://rbi-cibil-score-prediction.onrender.com/api/predict/" }}</code></h4>
-                    {% if response_status %}
-                        <h4 style="color: #721c24;">Response Status: <span style="color: #dc3545;">{{ response_status }} Error</span></h4>
-                    {% endif %}
                     <strong>Error:</strong> {{ error }}
-                    {% if response_text %}
-                        <h4 style="color: #721c24; margin-top: 10px;">Full Response Text:</h4>
-                        <pre style="background: #fff; border: 1px solid #f5c6cb; border-radius: 4px; padding: 10px; overflow-x: auto; font-size: 12px; color: #721c24;">{{ response_text }}</pre>
-                    {% endif %}
-                </div>
-            </div>
-        {% endif %}
-        
-        <!-- Form Data Display (for debugging) -->
-        {% if data %}
-            <div class="section" style="margin-top: 20px;">
-                <div class="section-title">Submitted Form Data</div>
-                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px;">
-                    <pre style="background: #fff; border: 1px solid #ced4da; border-radius: 4px; padding: 10px; overflow-x: auto; font-size: 12px; color: #495057;">{{ data|pprint }}</pre>
                 </div>
             </div>
         {% endif %}
