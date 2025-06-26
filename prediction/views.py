@@ -132,6 +132,14 @@ def prediction_form(request):
         api_url = 'https://rbi-cibil-score-prediction.onrender.com/api/predict/'  # Use Render deployment URL
         data = request.POST.dict()
         
+        # First, let's check if the service is alive
+        try:
+            health_check_url = 'https://rbi-cibil-score-prediction.onrender.com/api/health/'
+            health_response = requests.get(health_check_url, timeout=10)
+            health_status = f"Health check: {health_response.status_code}"
+        except Exception as health_error:
+            health_status = f"Health check failed: {str(health_error)}"
+        
         try:
             response = requests.post(api_url, json=data, timeout=30)
             
@@ -140,7 +148,8 @@ def prediction_form(request):
                 return render(request, 'prediction/predict_form.html', {
                     'result': result, 
                     'data': data,
-                    'success': True
+                    'success': True,
+                    'health_status': health_status
                 })
             else:
                 # Handle API errors
@@ -154,22 +163,33 @@ def prediction_form(request):
                 return render(request, 'prediction/predict_form.html', {
                     'error': error_message,
                     'data': data,
-                    'success': False
+                    'success': False,
+                    'health_status': health_status
                 })
                 
+        except requests.exceptions.Timeout as e:
+            # Handle timeout specifically
+            return render(request, 'prediction/predict_form.html', {
+                'error': f"Timeout Error: The API took too long to respond. This might be because the Render service is sleeping (free tier limitation). Please try again in a few seconds. Error: {str(e)}",
+                'data': data,
+                'success': False,
+                'health_status': health_status
+            })
         except requests.exceptions.RequestException as e:
             # Handle connection errors
             return render(request, 'prediction/predict_form.html', {
-                'error': f"Connection Error: {str(e)}",
+                'error': f"Connection Error: {str(e)}. The Render service might be down or restarting. Please try again later.",
                 'data': data,
-                'success': False
+                'success': False,
+                'health_status': health_status
             })
         except Exception as e:
             # Handle other errors
             return render(request, 'prediction/predict_form.html', {
                 'error': f"Unexpected Error: {str(e)}",
                 'data': data,
-                'success': False
+                'success': False,
+                'health_status': health_status
             })
     
     return render(request, 'prediction/predict_form.html')
