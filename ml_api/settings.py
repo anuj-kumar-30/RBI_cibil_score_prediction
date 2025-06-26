@@ -137,3 +137,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 import os
 ML_MODEL_PATH = os.path.join(BASE_DIR, 'notebook3_rf_model.joblib')
 ML_COLUMNS_PATH = os.path.join(BASE_DIR, 'model_columns.txt')
+
+# CSRF trusted origins for Railway deployment
+CSRF_TRUSTED_ORIGINS = [
+    'https://rbicibilscoreprediction-production.up.railway.app',
+]
