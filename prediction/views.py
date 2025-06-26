@@ -129,12 +129,12 @@ def prediction_form(request):
     if request.method == 'POST':
         # Collect form data and send to API
         import requests
-        api_url = 'https://rbi-cibil-score-prediction.onrender.com/api/predict/'  # Use Render deployment URL
+        api_url = 'https://rbicibilscoreprediction-production.up.railway.app/api/predict/'  # Use Railway deployment URL
         data = request.POST.dict()
         
         # First, let's check if the service is alive
         try:
-            health_check_url = 'https://rbi-cibil-score-prediction.onrender.com/api/health/'
+            health_check_url = 'https://rbicibilscoreprediction-production.up.railway.app/api/health/'
             health_response = requests.get(health_check_url, timeout=10)
             health_status = f"Health check: {health_response.status_code}"
         except Exception as health_error:
@@ -170,7 +170,7 @@ def prediction_form(request):
         except requests.exceptions.Timeout as e:
             # Handle timeout specifically
             return render(request, 'prediction/predict_form.html', {
-                'error': f"Timeout Error: The API took too long to respond. This might be because the Render service is sleeping (free tier limitation). Please try again in a few seconds. Error: {str(e)}",
+                'error': f"Timeout Error: The API took too long to respond. This might be because the Railway service is sleeping (free tier limitation). Please try again in a few seconds. Error: {str(e)}",
                 'data': data,
                 'success': False,
                 'health_status': health_status
@@ -178,7 +178,7 @@ def prediction_form(request):
         except requests.exceptions.RequestException as e:
             # Handle connection errors
             return render(request, 'prediction/predict_form.html', {
-                'error': f"Connection Error: {str(e)}. The Render service might be down or restarting. Please try again later.",
+                'error': f"Connection Error: {str(e)}. The Railway service might be down or restarting. Please try again later.",
                 'data': data,
                 'success': False,
                 'health_status': health_status

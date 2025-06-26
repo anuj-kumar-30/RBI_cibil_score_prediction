@@ -9,7 +9,7 @@ import json
 import time
 
 # API URLs
-BASE_URL = "https://rbi-cibil-score-prediction.onrender.com"
+BASE_URL = "https://rbicibilscoreprediction-production.up.railway.app/"
 HEALTH_URL = f"{BASE_URL}/api/health/"
 PREDICT_URL = f"{BASE_URL}/api/predict/"
 
