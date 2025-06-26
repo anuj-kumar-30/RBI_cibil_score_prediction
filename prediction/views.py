@@ -129,7 +129,7 @@ def prediction_form(request):
     if request.method == 'POST':
         # Collect form data and send to API
         import requests
-        api_url = 'https://rbi-cibil-score-prediction.onrender.com/api/predict/'  # Use Render deployment URL
+        api_url = 'https://rbi-cibil-score-prediction.onrender.com/api/api/predict/'  # Use Render deployment URL
         data = request.POST.dict()
         response = requests.post(api_url, json=data)
         result = response.json() if response.status_code == 200 else None
